@@ -5,7 +5,6 @@ import java.util.Scanner;
 public class EvidenceChatekApp {
 
     public static void main(String[] args) {
-        // Konstanty pro definovani jednotlivych operaci (pouze pro cisty kod)
         final int KONEC_PROGRAMU = 0;
         final int VYPIS_CHATEK = 1;
         final int VYPIS_KONKRETNI_CHATKU = 2;
@@ -19,7 +18,6 @@ public class EvidenceChatekApp {
 
         Scanner scanner = new Scanner(System.in);
 
-        // Definovani pole podle velikosti kempu (poctu chatek)
         int[] chatky = new int[VELIKOST_KEMPU];
         int operace;
 
@@ -36,82 +34,95 @@ public class EvidenceChatekApp {
                     0 - Konec programu
                     """);
 
-            // Ziskani operace od uzivatele
             System.out.print("Zadej volbu: ");
             operace = scanner.nextInt();
 
             switch (operace) {
                 case VYPIS_CHATEK -> {
-
-                    // Projdi cele pole od <0, VELIKOST) a vypis kazdy index
                     for (int i = 0; i < chatky.length; i++) {
                         System.out.println("Chatka [" + (i + 1) + "] = " + chatky[i]);
                     }
                 }
 
                 case VYPIS_KONKRETNI_CHATKU -> {
-
-                    // Ziskani cisla chatky od uzivatele
                     System.out.print("Zadej cislo chatky: ");
-                    // Odecteni 1 protoze uzivatel cisluje chatky o 1, ale program od 0
                     int cisloChatky = scanner.nextInt() - 1;
-
-                    // Zaporne nebo cislo vetsi nez je pocet chatek je nevalidni vstup
                     if (cisloChatky < 0 || cisloChatky >= chatky.length) {
                         System.err.println("Tato chatka neexistuje");
                         continue; // Zacni novou iteraci cyklu
                     }
-
                     System.out.println("Chatka [" + (cisloChatky + 1) + "] = " + chatky[cisloChatky]);
                 }
 
                 case PRIDANI_NAVSTEVNIKU -> {
-
-                    // Ziskani cisla chatky od uzivatele
                     System.out.print("Zadej cislo chatky: ");
-                    // Odecteni 1 protoze uzivatel cisluje chatky o 1, ale program od 0
                     int cisloChatky = scanner.nextInt() - 1;
-
-                    // Zaporne nebo cislo vetsi nez je pocet chatek je nevalidni vstup
                     if (cisloChatky < 0 || cisloChatky >= chatky.length) {
                         System.err.println("Tato chatka neexistuje");
-                        continue; // Zacni novou iteraci cyklu
+                        continue;
                     }
-
-                    // Ziskani poctu navstevniku, kteri se chteji v chatce ubytovat
                     System.out.print("Zadej pocet navstevniku: ");
                     int pocetNavstevniku = scanner.nextInt();
-
-                    // Zaporne cislo nebo prilis velky nevalidni vstup
                     if (pocetNavstevniku <= 0 || pocetNavstevniku > MAX_VELIKOST_CHATKY) {
                         System.err.println("Neplatna hodnota pro pocet navstevniku");
-                        continue; // Zacni novou iteraci cyklu
+                        continue;
                     }
-
-                    // Pokud je pocet uz ubytovanych plus ty co se chteji ubytovat vetsi nez kapacita chatky je to nevalidni vstup
                     if ((chatky[cisloChatky] + pocetNavstevniku) > MAX_VELIKOST_CHATKY) {
                         System.err.println("Prekrocen maximalni pocet navstevniku chatky");
                         continue; // Zacni novou iteraci cyklu
                     }
-
-                    // Pridej nove ubytovane do chatky k tem co uz tam jsou
                     chatky[cisloChatky] = pocetNavstevniku + chatky[cisloChatky];
                 }
 
                 case ODEBRANI_NAVSTEVNIKU -> {
-                    // TODO
+                    System.out.print("Zadejte cislo chatky, pro ktere chctete vymazat ucastnika.\n: ");
+                    int cisloChatky = scanner.nextInt() - 1;
+                    if (cisloChatky < 0 || cisloChatky >= chatky.length) {
+                        System.err.println("Tato chatka neexistuje");
+                        continue;
+                    }
+                    System.out.printf("Zadejte cislo kolik chete nastevniku odebrat z moznych %d .\n: ", chatky[cisloChatky]);
+                    int cisloOdebraniNastevniku = scanner.nextInt();
+                    if (cisloOdebraniNastevniku <= 0 || cisloOdebraniNastevniku > chatky[cisloChatky]) {
+                        System.out.println("Nelze odebrat vice nastevniku, nez kolik se nachazi");
+                        continue;
+                    }
+                    chatky[cisloChatky] = chatky[cisloChatky] - cisloOdebraniNastevniku;
+                    System.out.printf("Chatka %d ma nyni %d nastevniku. ", cisloChatky+1, chatky[cisloChatky]);
                 }
 
                 case CELKOVA_OBSAZENOST -> {
-                    // TODO
+                    System.out.print("Zadejte cislo chatky, pro ktere chctete zjistit dostupnost.\n: ");
+                    int cisloChatky = scanner.nextInt() - 1;
+                    if (cisloChatky < 0 || cisloChatky >= chatky.length) {
+                        System.err.println("Tato chatka neexistuje");
+                        continue;
+                    }
+                    int pocetZbyvajicichNastevniku =  MAX_VELIKOST_CHATKY - chatky[cisloChatky];
+                    System.out.printf("Lze maximalne pridat moznych nastevniku %d.\n", pocetZbyvajicichNastevniku);
+                    System.out.println("Ostatni chatky maji pocet obsazeni: ");
+                    for (int chatka = 0 ; chatka < VELIKOST_KEMPU; chatka++) {
+                        if (chatka != cisloChatky){
+                            if (chatky[chatka] == 0) {
+                                System.out.printf("Chatka %d je prazdna\n", chatka+1);
+                            } else {
+                                System.out.printf("Chatka %d je zabrana\n", chatka+1);
+                            }
+                        }
+                    }
                 }
 
                 case VYPIS_PRAZDNE_CHATKY -> {
-                    // TODO
+                    for (int chatka = 0 ; chatka < VELIKOST_KEMPU; chatka++) {
+                        if (chatky[chatka] == 0) {
+                            System.out.printf("Chatka %d je prazdna.\n", chatka + 1);
+                        }
+                    }
                 }
 
                 case KONEC_PROGRAMU -> {
                     System.out.println("Konec programu");
+                    System.exit(1);
                 }
 
                 default -> {
